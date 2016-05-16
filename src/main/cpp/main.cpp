@@ -2,14 +2,22 @@
 
 #include <SFML/Graphics.hpp>
 
-static sf::CircleShape circle(100.f);
+//static sf::CircleShape circle(100.f); // Set the origin
 static bool leftMouseButton = false;
 static bool moveTo = true;
 static int mousePressedX = 0;
 static int mousePressedY = 0;
 
-void update();
-void render(sf::RenderWindow &window);
+struct Objects {
+	sf::CircleShape circle;
+	
+	Objects(sf::CircleShape pCircle) {
+		circle = pCircle;
+	}
+};
+
+void update(Objects &objects);
+void render(sf::RenderWindow &window, Objects &Objects);
 
 int main() {
 	using namespace sf;
@@ -17,10 +25,11 @@ int main() {
 	settings.antialiasingLevel = 8;
 	RenderWindow window(VideoMode(800, 600), "SFML works!", Style::Titlebar | Style::Close, settings);
 	window.setVerticalSyncEnabled(true);
-    circle.setFillColor(Color::Green); // sf::Color(100, 250, 50)
-    circle.setOutlineThickness(6);
-    circle.setOutlineColor(sf::Color(250, 150, 100));
-    circle.setPosition(200, 200);
+    Objects objects(sf::CircleShape(100.f));
+    objects.circle.setFillColor(Color::Green); // sf::Color(100, 250, 50)
+    objects.circle.setOutlineThickness(6);
+    objects.circle.setOutlineColor(sf::Color(250, 150, 100));
+    objects.circle.setPosition(200, 200);
 
     while (window.isOpen())
     {
@@ -49,9 +58,9 @@ int main() {
 
         window.clear();
 
-        update();
+        update(objects);
         // Rendering
-        render(window);
+        render(window, objects);
 
         window.display();
     }
@@ -59,43 +68,43 @@ int main() {
 	return(0);
 }
 
-void update() {
+void update(Objects &objects) {
 	using namespace sf;
 	if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) {
-		circle.move(6, 0);
+		objects.circle.move(6, 0);
 	} else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) {
-		circle.move(-6, 0);
+		objects.circle.move(-6, 0);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W)) {
-		circle.move(0, -6);
+		objects.circle.move(0, -6);
 	} else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S)) {
-		circle.move(0, 6);
+		objects.circle.move(0, 6);
 	}
 
 	if (moveTo) {
-		if (circle.getPosition().x <= mousePressedX + 6 && circle.getPosition().x >= mousePressedX - 6) {
-			circle.setPosition(mousePressedX, circle.getPosition().y);
+		if (objects.circle.getPosition().x <= mousePressedX + 6 && objects.circle.getPosition().x >= mousePressedX - 6) {
+			objects.circle.setPosition(mousePressedX, objects.circle.getPosition().y);
 		}
-		if (circle.getPosition().y <= mousePressedY + 6 && circle.getPosition().y >= mousePressedY - 6) {
-			circle.setPosition(circle.getPosition().x, mousePressedY);
+		if (objects.circle.getPosition().y <= mousePressedY + 6 && objects.circle.getPosition().y >= mousePressedY - 6) {
+			objects.circle.setPosition(objects.circle.getPosition().x, mousePressedY);
 		}
-		if (circle.getPosition().x > mousePressedX) {
-			circle.move(-6, 0);
-		} else if (circle.getPosition().x < mousePressedX) {
-			circle.move(6, 0);
+		if (objects.circle.getPosition().x > mousePressedX) {
+			objects.circle.move(-6, 0);
+		} else if (objects.circle.getPosition().x < mousePressedX) {
+			objects.circle.move(6, 0);
 		}
-		if (circle.getPosition().y > mousePressedY) {
-			circle.move(0, -6);
-		} else if (circle.getPosition().y < mousePressedY) {
-			circle.move(0, 6);
+		if (objects.circle.getPosition().y > mousePressedY) {
+			objects.circle.move(0, -6);
+		} else if (objects.circle.getPosition().y < mousePressedY) {
+			objects.circle.move(0, 6);
 		}
-		if (circle.getPosition().x == mousePressedX && circle.getPosition().y == mousePressedY) {
+		if (objects.circle.getPosition().x == mousePressedX && objects.circle.getPosition().y == mousePressedY) {
 			moveTo = false;
 		}
 	}
 }
 
-void render(sf::RenderWindow &window) {
+void render(sf::RenderWindow &window, Objects &objects) {
 	using namespace sf;
-	window.draw(circle);
+	window.draw(objects.circle);
 }
