@@ -7,6 +7,7 @@ static bool leftMouseButton = false;
 static bool moveTo = true;
 static int mousePressedX = 0;
 static int mousePressedY = 0;
+static int updateNum = 0;
 
 struct Objects {
 	sf::CircleShape circle;
@@ -16,6 +17,7 @@ struct Objects {
 	}
 };
 
+void init(Objects &objects);
 void update(Objects &objects);
 void render(sf::RenderWindow &window, Objects &Objects);
 
@@ -26,10 +28,7 @@ int main() {
 	RenderWindow window(VideoMode(800, 600), "SFML works!", Style::Titlebar | Style::Close, settings);
 	window.setVerticalSyncEnabled(true);
     Objects objects(sf::CircleShape(100.f));
-    objects.circle.setFillColor(Color::Green); // sf::Color(100, 250, 50)
-    objects.circle.setOutlineThickness(6);
-    objects.circle.setOutlineColor(sf::Color(250, 150, 100));
-    objects.circle.setPosition(200, 200);
+    init(objects);
 
     while (window.isOpen())
     {
@@ -68,8 +67,18 @@ int main() {
 	return(0);
 }
 
+void init(Objects &objects) {
+	using namespace sf;
+	objects.circle.setFillColor(Color::Green); // sf::Color(100, 250, 50)
+    objects.circle.setOutlineThickness(6);
+    objects.circle.setOutlineColor(sf::Color(250, 150, 100));
+    objects.circle.setOrigin(objects.circle.getRadius(), objects.circle.getRadius());
+    objects.circle.setPosition(200, 200);
+}
+
 void update(Objects &objects) {
 	using namespace sf;
+	updateNum+=1;
 	if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) {
 		objects.circle.move(6, 0);
 	} else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) {
@@ -102,6 +111,16 @@ void update(Objects &objects) {
 			moveTo = false;
 		}
 	}
+
+	/*if (updateNum % 500 == 0 && updateNum != 0) {
+		updateNum = -499;
+	}
+	int movement = updateNum % 500;
+	if (movement < 0) {
+		movement *= -1;
+	}
+	objects.circle.setPosition(movement, movement);
+	objects.circle.setFillColor(Color(movement % 255, movement / 2 % 255, movement * 2 % 255));*/
 }
 
 void render(sf::RenderWindow &window, Objects &objects) {
